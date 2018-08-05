@@ -25,7 +25,6 @@ def main(r_collections_project):
         logger.error(sys.exc_info()[0])
         exit()
 
-    return(1)
 
 def get_unique_imgs(r_collections_project):
    
@@ -57,8 +56,6 @@ def cp_imgs(r_collections_project, imgs):
                 os.path.join(img_path, img),
                 os.path.join(str(project_dir), "data", "external", "collections", img)
             )
-
-    return(1)
 
 
 if __name__ == '__main__':

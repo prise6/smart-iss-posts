@@ -33,6 +33,11 @@ data: requirements
 sync_collections: 
 	$(PYTHON_INTERPRETER) src/data/sync_collections.py
 
+## Resize collection
+resize_collections: 
+	$(PYTHON_INTERPRETER) src/data/resize_collections.py
+
+
 ## Delete all compiled Python files
 clean:
 	find . -type f -name "*.py[co]" -delete
