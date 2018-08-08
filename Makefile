@@ -30,12 +30,18 @@ data: requirements
 	$(PYTHON_INTERPRETER) src/data/make_dataset.py
 
 ## Sync photos with my refs
-sync_collections: 
+sync_collections: src/data/sync_collections.py
 	$(PYTHON_INTERPRETER) src/data/sync_collections.py
+	touch sync_collections
 
 ## Resize collection
-resize_collections: 
+resize_collections: src/data/resize_collections.py
 	$(PYTHON_INTERPRETER) src/data/resize_collections.py
+	touch resize_collections
+
+build_tfrecords: sync_collections resize_collections src/features/build_tfrecords.py
+	$(PYTHON_INTERPRETER) src/features/build_tfrecords.py
+	touch build_tfrecords
 
 
 ## Delete all compiled Python files
