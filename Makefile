@@ -39,9 +39,18 @@ resize_collections: src/data/resize_collections.py
 	$(PYTHON_INTERPRETER) src/data/resize_collections.py
 	touch resize_collections
 
+## Build TFRecords
 build_tfrecords: sync_collections resize_collections src/features/build_tfrecords.py
 	$(PYTHON_INTERPRETER) src/features/build_tfrecords.py
 	touch build_tfrecords
+
+## Train model 
+train_model: build_tfrecords
+	$(PYTHON_INTERPRETER) src/models/train_model.py
+
+## test
+draft: 
+	$(PYTHON_INTERPRETER) src/models/data_loader.py
 
 
 ## Delete all compiled Python files

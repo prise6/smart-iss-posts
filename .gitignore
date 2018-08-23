@@ -80,3 +80,8 @@ target/
 
 # Mac OS-specific storage files
 .DS_Store
+
+# makefile step
+sync_collections
+resize_collections
+build_tfrecords
