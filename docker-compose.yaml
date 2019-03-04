@@ -1,0 +1,48 @@
+version: "3"
+services:
+  jupyter:
+    image: jupyter/tensorflow-notebook:7f1482f5a136
+    container_name: jupyter-iss
+    command: start.sh jupyter lab --NotebookApp.base_url=/jupyter --NotebookApp.token='' --NotebookApp.password=''
+    networks:
+      - netproxy
+      - default
+    volumes:
+      - "${PWD}:/home/jovyan/work"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.frontend.rule=Host:iss.docker.lo;PathPrefix: /jupyter"
+      - "traefik.port=8888"
+
+  adminer:
+    image: adminer:4.7
+    container_name: adminer-iss
+    networks:
+      - netproxy
+      - default
+    labels:
+      - "traefik.enable=true"
+      - "traefik.frontend.rule=Host:iss.docker.lo;PathPrefix: /adminer"
+      - "traefik.port=8080"
+      - "traefik.main.frontend.entryPoints=http"
+
+  mysql:
+    image: mysql:8
+    container_name: mysql-iss
+    networks:
+      - default
+    volumes:
+      - "${PWD}/mysql:/var/lib/mysql"
+    environment:
+      MYSQL_DATABASE: iss
+      MYSQL_ROOT_PASSWORD: pass
+      MYSQL_USER: iss
+      MYSQL_PASSWORD: iss
+    labels:
+      - "traefik.enable=false"
+
+
+networks:
+  netproxy:
+    external:
+      name: netproxy

@@ -85,3 +85,6 @@ target/
 sync_collections
 resize_collections
 build_tfrecords
+
+# mysql dir
+mysql/

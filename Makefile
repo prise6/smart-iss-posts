@@ -9,6 +9,7 @@ BUCKET = [OPTIONAL] your-bucket-for-syncing-data (do not include 's3://')
 PROFILE = default
 PROJECT_NAME = smartissposts
 PYTHON_INTERPRETER = python
+SH_INTERPRETER = /bin/sh
 
 ifeq (,$(shell which conda))
 HAS_CONDA=False
@@ -30,9 +31,8 @@ data: requirements
 	$(PYTHON_INTERPRETER) src/data/make_dataset.py
 
 ## Sync photos with my refs
-sync_collections: src/data/sync_collections.py
-	$(PYTHON_INTERPRETER) src/data/sync_collections.py
-	touch sync_collections
+sync_collections: iss/data/sync_collections.sh
+	$(PYTHON_INTERPRETER) iss/data/sync_collections.sh
 
 ## Resize collection
 resize_collections: src/data/resize_collections.py
@@ -55,8 +55,8 @@ draft:
 
 ## Delete all compiled Python files
 clean:
-	find . -type f -name "*.py[co]" -delete
-	find . -type d -name "__pycache__" -delete
+	find . -path ./mysql -prune -o -type f -name "*.py[co]" -exec rm {} +
+	find . -path ./mysql -prune -o -type d -name "__pycache__" -exec rm {} + 
 
 ## Lint using flake8
 lint:
