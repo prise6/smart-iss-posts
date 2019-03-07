@@ -33,16 +33,3 @@ CREATE TABLE `iss`.`pictures` (
 		self.conn.commit()
 
 		return self.cursor.rowcount
-
-	def select(self, array):
-		sql = """
-SELECT tmp.* FROM (
-	SELECT 
-	COUNT(*) as nb,
-	pictures_location as location
-
-	FROM iss.pictures
-	GROUP BY pictures_location
-	) as tmp 
-ORDER BY nb DESC
-		"""
