@@ -8,17 +8,17 @@ import re
 
 class CollectionManagerFromDirectory:
 
-	def __init__(self, dir, config):
+	def __init__(self, config):
 		self.config = config
+		self.dir = self.config.get('directory')['collections']
 
 		jpg_regex = re.compile(".*jpg$")
-		self.pictures_id = [pict for pict in os.listdir(dir) if jpg_regex.match(pict)]
+		self.pictures_id = [pict for pict in os.listdir(self.dir) if jpg_regex.match(pict)]
 		
-		self.dir = os.path.join(self.config.project_dir, dir)
-		self.dir_base = os.path.join(self.config.project_dir, self.config.get('directory')['autoencoder']['base'])
-		self.dir_train = os.path.join(self.config.project_dir, self.config.get('directory')['autoencoder']['train'])
-		self.dir_test = os.path.join(self.config.project_dir, self.config.get('directory')['autoencoder']['test'])
-		self.dir_valid = os.path.join(self.config.project_dir, self.config.get('directory')['autoencoder']['valid'])
+		self.dir_base = self.config.get('directory')['autoencoder']['base']
+		self.dir_train = self.config.get('directory')['autoencoder']['train']
+		self.dir_test = self.config.get('directory')['autoencoder']['test']
+		self.dir_valid = self.config.get('directory')['autoencoder']['valid']
 		
 		self.seed = self.config.get('training')['seed']
 		self.proportions = self.config.get('training')['proportions']

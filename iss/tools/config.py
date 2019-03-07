@@ -4,19 +4,34 @@ import os
 import sys
 import yaml
 from dotenv import find_dotenv, load_dotenv
+import re
 
 load_dotenv(find_dotenv())
 
+
 class Config:
 
-  def __init__(self, project_dir = os.getenv("PROJECT_DIR"), mode = os.getenv("MODE")):
+	def __init__(self, project_dir = os.getenv("PROJECT_DIR"), mode = os.getenv("MODE")):
 
-    self.project_dir = project_dir
-    self.mode = mode
+		self.project_dir = project_dir
+		self.mode = mode
+		self.path_matcher = re.compile(r'\$\{([^}^{]+)\}')
 
-    with open(os.path.join(self.project_dir, 'config', 'config_%s.yaml' % (self.mode)), 'r') as ymlfile:
-      self.config = yaml.load(ymlfile)
+		yaml.add_implicit_resolver('!path', self.path_matcher, None, yaml.SafeLoader)
+		yaml.add_constructor('!path', self.path_constructor, yaml.SafeLoader)
+		print("ok")
 
-  def get(self, key):
-    return self.config[key]
+		with open(os.path.join(self.project_dir, 'config', 'config_%s.yaml' % (self.mode)), 'r') as ymlfile:
+			self.config = yaml.safe_load(ymlfile)
+
+	def get(self, key):
+		return self.config[key]
+
+	def path_constructor(self, loader, node):
+		''' Extract the matched value, expand env variable, and replace the match '''
+		value = node.value
+		match = self.path_matcher.match(value)
+		env_var = match.group()[2:-1]
+
+		return os.environ.get(env_var) + value[match.end():]
 
