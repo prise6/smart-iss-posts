@@ -4,6 +4,7 @@ services:
     image: jupyter/tensorflow-notebook:7f1482f5a136
     container_name: jupyter-iss
     command: start.sh jupyter lab --NotebookApp.base_url=/jupyter --NotebookApp.token='' --NotebookApp.password=''
+    user: root
     networks:
       - netproxy
       - default
@@ -13,6 +14,9 @@ services:
       - "traefik.enable=true"
       - "traefik.frontend.rule=Host:iss.docker.lo;PathPrefix: /jupyter"
       - "traefik.port=8888"
+    environment:
+      - NB_GID=1000
+      - NB_USER=jovyan
 
   adminer:
     image: adminer:4.7

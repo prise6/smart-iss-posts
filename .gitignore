@@ -88,3 +88,5 @@ build_tfrecords
 
 # mysql dir
 mysql/
+config/*
+!config/config.template.yaml

@@ -1,0 +1,21 @@
+version: 1
+mysql:
+  database:
+    name: XXX
+    user: XXX
+    password: XXX
+    server: XXX
+    port: 3306
+directory:
+  collections: 'path/to/dir/collection'
+  autoencoder: 
+    base: 'path/to/dir/collection'
+    train: 'path/to/dir/collection'
+    test: 'path/to/dir/collection'
+    valid: 'path/to/dir/collection'
+training:
+  seed: 37672
+  proportions:
+    train: 0.7
+    test: 0.2
+    valid: 0.1
