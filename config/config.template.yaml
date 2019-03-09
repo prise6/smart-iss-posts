@@ -1,21 +1,48 @@
-version: 1
+directory:
+  autoencoder:
+    base: XXX
+    test: XXX
+    train: XXX
+    valid: XXX
+  collections: XXX
+models:
+  simple:
+    batch_size: XXX
+    callbacks:
+      checkpoint:
+        directory: XXX
+        period: XXX
+        verbose: XXX
+      csv_logger:
+        append: XXX
+        directory: XXX
+      display_picture:
+        epoch_laps: XXX
+    epochs: XXX
+    initial_epoch: XXX
+    input_channel: XXX
+    input_height: XXX
+    input_width: XXX
+    learning_rate: XXX
+    model_name: XXX
+    save_directory: XXX
+    steps_per_epoch: XXX
+    use_multiprocessing: XXX
+    validation_freq: XXX
+    validation_steps: XXX
+    verbose: XXX
+    workers: XXX
 mysql:
   database:
     name: XXX
-    user: XXX
     password: XXX
+    port: XXX
     server: XXX
-    port: 3306
-directory:
-  collections: 'path/to/dir/collection'
-  autoencoder: 
-    base: 'path/to/dir/collection'
-    train: 'path/to/dir/collection'
-    test: 'path/to/dir/collection'
-    valid: 'path/to/dir/collection'
+    user: XXX
 training:
-  seed: 37672
   proportions:
-    train: 0.7
-    test: 0.2
-    valid: 0.1
+    test: XXX
+    train: XXX
+    valid: XXX
+  seed: XXX
+version: XXX

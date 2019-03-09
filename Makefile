@@ -5,7 +5,6 @@
 #################################################################################
 
 PROJECT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
-BUCKET = [OPTIONAL] your-bucket-for-syncing-data (do not include 's3://')
 PROFILE = default
 PROJECT_NAME = smartissposts
 PYTHON_INTERPRETER = python
@@ -21,10 +20,32 @@ endif
 # COMMANDS                                                                      #
 #################################################################################
 
+## Delete all compiled Python files
+clean:
+	find . -path ./mysql -prune -o -type f -name "*.py[co]" -exec rm {} +
+	find . -path ./mysql -prune -o -type d -name "__pycache__" -exec rm {} + 
+
+## Test python environment is setup correctly
+test_environment:
+	$(PYTHON_INTERPRETER) test_environment.py
+
+## Write requirements.txt
+pipreqs: 
+	pipreqs --force $(PROJECT_DIR)
+
 ## Install Python Dependencies
 requirements: test_environment
 	pip install -U pip setuptools wheel
 	pip install -r requirements.txt
+
+## Write config template
+config_template:
+	$(PYTHON_INTERPRETER) iss/tools/config_template.py
+
+
+#################################################################################
+# PROJECT RULES                                                                 #
+#################################################################################
 
 ## Make Dataset
 data: requirements
@@ -33,77 +54,6 @@ data: requirements
 ## Sync photos with my refs
 sync_collections: iss/data/sync_collections.sh
 	$(PYTHON_INTERPRETER) iss/data/sync_collections.sh
-
-## Resize collection
-resize_collections: src/data/resize_collections.py
-	$(PYTHON_INTERPRETER) src/data/resize_collections.py
-	touch resize_collections
-
-## Build TFRecords
-build_tfrecords: sync_collections resize_collections src/features/build_tfrecords.py
-	$(PYTHON_INTERPRETER) src/features/build_tfrecords.py
-	touch build_tfrecords
-
-## Train model 
-train_model: build_tfrecords
-	$(PYTHON_INTERPRETER) src/models/train_model.py
-
-## test
-draft: 
-	$(PYTHON_INTERPRETER) src/models/data_loader.py
-
-
-## Delete all compiled Python files
-clean:
-	find . -path ./mysql -prune -o -type f -name "*.py[co]" -exec rm {} +
-	find . -path ./mysql -prune -o -type d -name "__pycache__" -exec rm {} + 
-
-## Lint using flake8
-lint:
-	flake8 src
-
-## Upload Data to S3
-sync_data_to_s3:
-ifeq (default,$(PROFILE))
-	aws s3 sync data/ s3://$(BUCKET)/data/
-else
-	aws s3 sync data/ s3://$(BUCKET)/data/ --profile $(PROFILE)
-endif
-
-## Download Data from S3
-sync_data_from_s3:
-ifeq (default,$(PROFILE))
-	aws s3 sync s3://$(BUCKET)/data/ data/
-else
-	aws s3 sync s3://$(BUCKET)/data/ data/ --profile $(PROFILE)
-endif
-
-## Set up python interpreter environment
-create_environment:
-ifeq (True,$(HAS_CONDA))
-		@echo ">>> Detected conda, creating conda environment."
-ifeq (3,$(findstring 3,$(PYTHON_INTERPRETER)))
-	conda create --name $(PROJECT_NAME) python=3
-else
-	conda create --name $(PROJECT_NAME) python=2.7
-endif
-		@echo ">>> New conda env created. Activate with:\nsource activate $(PROJECT_NAME)"
-else
-	@pip install -q virtualenv virtualenvwrapper
-	@echo ">>> Installing virtualenvwrapper if not already intalled.\nMake sure the following lines are in shell startup file\n\
-	export WORKON_HOME=$$HOME/.virtualenvs\nexport PROJECT_HOME=$$HOME/Devel\nsource /usr/local/bin/virtualenvwrapper.sh\n"
-	@bash -c "source `which virtualenvwrapper.sh`;mkvirtualenv $(PROJECT_NAME) --python=$(PYTHON_INTERPRETER)"
-	@echo ">>> New virtualenv created. Activate with:\nworkon $(PROJECT_NAME)"
-endif
-
-## Test python environment is setup correctly
-test_environment:
-	$(PYTHON_INTERPRETER) test_environment.py
-
-#################################################################################
-# PROJECT RULES                                                                 #
-#################################################################################
-
 
 
 #################################################################################
