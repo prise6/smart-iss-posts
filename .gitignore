@@ -90,3 +90,6 @@ build_tfrecords
 mysql/
 config/*
 !config/config.template.yaml
+
+# models dir
+models/
