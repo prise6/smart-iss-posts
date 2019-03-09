@@ -3,16 +3,12 @@
 import os
 import sys
 import yaml
-from dotenv import find_dotenv, load_dotenv
 import re
-
-load_dotenv(find_dotenv())
-
 
 class Config:
 
-	def __init__(self, project_dir = os.getenv("PROJECT_DIR"), mode = os.getenv("MODE")):
-
+	def __init__(self, project_dir, mode):
+		
 		self.project_dir = project_dir
 		self.mode = mode
 		self.path_matcher = re.compile(r'\$\{([^}^{]+)\}')
