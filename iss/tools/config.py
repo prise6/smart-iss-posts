@@ -19,7 +19,6 @@ class Config:
 
 		yaml.add_implicit_resolver('!path', self.path_matcher, None, yaml.SafeLoader)
 		yaml.add_constructor('!path', self.path_constructor, yaml.SafeLoader)
-		print("ok")
 
 		with open(os.path.join(self.project_dir, 'config', 'config_%s.yaml' % (self.mode)), 'r') as ymlfile:
 			self.config = yaml.safe_load(ymlfile)
