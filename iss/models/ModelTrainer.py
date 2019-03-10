@@ -27,19 +27,33 @@ class ModelTrainer:
 
 		print(keras.__version__)
 
-		self.model.model.fit_generator(
-			generator = self.data_loader.get_train_generator(),
-			steps_per_epoch = self.steps_per_epoch, 
-			epochs = self.epochs,
-			verbose = self.verbose,
-			initial_epoch = self.initial_epoch,
-			callbacks = self.callbacks,
-			workers = self.workers,
-			use_multiprocessing = self.use_multiprocessing,
-			validation_data = self.data_loader.get_test_generator(),
-			validation_steps = self.validation_steps,
-			validation_freq = self.validation_freq
-		)
+		if self.validation_freq is not None:
+			self.model.model.fit_generator(
+				generator = self.data_loader.get_train_generator(),
+				steps_per_epoch = self.steps_per_epoch, 
+				epochs = self.epochs,
+				verbose = self.verbose,
+				initial_epoch = self.initial_epoch,
+				callbacks = self.callbacks,
+				workers = self.workers,
+				use_multiprocessing = self.use_multiprocessing,
+				validation_data = self.data_loader.get_test_generator(),
+				validation_steps = self.validation_steps,
+				validation_freq = self.validation_freq
+			)
+		else:
+			self.model.model.fit_generator(
+				generator = self.data_loader.get_train_generator(),
+				steps_per_epoch = self.steps_per_epoch, 
+				epochs = self.epochs,
+				verbose = self.verbose,
+				initial_epoch = self.initial_epoch,
+				callbacks = self.callbacks,
+				workers = self.workers,
+				use_multiprocessing = self.use_multiprocessing,
+				validation_data = self.data_loader.get_test_generator(),
+				validation_steps = self.validation_steps
+			)
 
 		self.model.save()
 
