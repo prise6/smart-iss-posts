@@ -2,7 +2,7 @@
 
 from iss.models.AbstractModel import AbstractModel
 from keras.layers import Input, Dense, Conv2D, MaxPooling2D, UpSampling2D, Reshape, Flatten
-from keras.optimizers import Adadelta
+from keras.optimizers import Adadelta, Adam
 from keras.models import Model
 import numpy as np
 
@@ -26,11 +26,11 @@ class SimpleAutoEncoder(AbstractModel):
 			picture = Input(shape = input_shape)
 
 			x = Flatten()(picture)
-			layer_1 = Dense(2000, activation = 'relu', name = 'enc_1')(x)
+			layer_1 = Dense(1000, activation = 'relu', name = 'enc_1')(x)
 			layer_2 = Dense(100, activation = 'relu', name = 'enc_2')(layer_1)
-			layer_3 = Dense(30, activation = 'relu', name = 'enc_3')(layer_2)
+			layer_3 = Dense(50, activation = 'relu', name = 'enc_3')(layer_2)
 			layer_4 = Dense(100, activation = 'relu', name = 'dec_1')(layer_3)
-			layer_5 = Dense(2000, activation = 'relu', name = 'dec_2')(layer_4)
+			layer_5 = Dense(1000, activation = 'relu', name = 'dec_2')(layer_4)
 
 			# encoded network
 			# x = Conv2D(1, (3, 3), activation = 'relu', padding = 'same', name = 'enc_conv_1')(picture)
@@ -45,6 +45,7 @@ class SimpleAutoEncoder(AbstractModel):
 
 			self.model = Model(picture, decoded)
 			
-			optimizer = Adadelta(lr = self.lr, rho = 0.95, epsilon = None, decay = 0.0)
+			# optimizer = Adadelta(lr = self.lr, rho = 0.95, epsilon = None, decay = 0.0)
+			optimizer = Adam(lr = 0.001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
 			
 			self.model.compile(optimizer = optimizer, loss = 'binary_crossentropy')
