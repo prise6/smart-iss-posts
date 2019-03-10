@@ -15,6 +15,7 @@ class SimpleAutoEncoder(AbstractModel):
 
 			super().__init__(save_directory, model_name)
 
+			self.activation = config['activation']
 			self.input_shape = (config['input_height'], config['input_width'], config['input_channel'])
 			self.lr = config['learning_rate']
 			self.build_model()
@@ -39,7 +40,7 @@ class SimpleAutoEncoder(AbstractModel):
 			# x = Conv2D(1, (3, 3), activation = 'relu', padding = 'same', name = 'dec_conv_1')(encoded)
 			# x = UpSampling2D((2, 2))(x)
 			# x = Flatten()(x)
-			x = Dense(np.prod(input_shape), activation = 'softmax')(layer_5)
+			x = Dense(np.prod(input_shape), activation = self.activation)(layer_5)
 			decoded = Reshape((input_shape))(x)
 
 			self.model = Model(picture, decoded)
