@@ -3,7 +3,7 @@
 from keras.callbacks import ModelCheckpoint, CSVLogger
 from iss.models.Callbacks import DisplayPictureCallback
 from iss.tools.tools import Tools
-
+import keras
 
 class ModelTrainer:
 
@@ -24,6 +24,8 @@ class ModelTrainer:
 		self.init_callbacks(config)
 
 	def train(self):
+
+		print(keras.__version__)
 
 		self.model.model.fit_generator(
 			generator = self.data_loader.get_train_generator(),
