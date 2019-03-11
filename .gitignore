@@ -93,3 +93,4 @@ config/*
 
 # models dir
 models/
+!iss/models
