@@ -18,7 +18,7 @@ class ImageDataGeneratorWrapper:
 
 	def image_data_generator(self, config):
 		self.datagen = ImageDataGenerator(
-  		rescale = 1./255
+  			rescale = 1./255
 		)
 		return self
 
