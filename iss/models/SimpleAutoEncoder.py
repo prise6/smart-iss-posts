@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from iss.models.AbstractModel import AbstractModel
+from iss.models import AbstractAutoEncoderModel
 from keras.layers import Input, Dense, Conv2D, MaxPooling2D, UpSampling2D, Reshape, Flatten
 from keras.optimizers import Adadelta, Adam
 from keras.models import Model
 import numpy as np
 
-class SimpleAutoEncoder(AbstractModel):
+class SimpleAutoEncoder(AbstractAutoEncoderModel):
 
 		def __init__(self, config):
 

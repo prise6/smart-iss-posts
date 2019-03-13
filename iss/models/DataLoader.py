@@ -4,9 +4,10 @@ from keras.preprocessing.image import ImageDataGenerator
 
 class ImageDataGeneratorWrapper:
 
-	def __init__(self, config):
+	def __init__(self, config, model):
 		
 		self.config = config
+		self.model = model
 		self.datagen = None
 		self.train_generator = None
 		self.test_generator = None
@@ -26,11 +27,11 @@ class ImageDataGeneratorWrapper:
 		# voir plus tars si besoin de parametrer
 		return self.datagen.flow_from_directory(
 			directory,
-			target_size = (self.config.get('models')['simple']['input_height'], self.config.get('models')['simple']['input_width']),
+			target_size = (self.config.get('models')[self.model]['input_height'], self.config.get('models')[self.model]['input_width']),
 			color_mode = 'rgb',
 			classes = None,
 			class_mode = 'input',
-			batch_size = self.config.get('models')['simple']['batch_size'], 
+			batch_size = self.config.get('models')[self.model]['batch_size'], 
 		)
 
 	def set_train_generator(self):

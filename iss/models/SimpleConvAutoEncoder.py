@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from iss.models.AbstractModel import AbstractModel
-from keras.layers import Input, Dense, Conv2D, MaxPooling2D, UpSampling2D, Reshape, Flatten
+from iss.models import AbstractAutoEncoderModel
+from keras.layers import Input, Dense, Conv2D, MaxPooling2D, UpSampling2D, Reshape, Flatten, BatchNormalization, Activation
 from keras.optimizers import Adadelta, Adam
 from keras.models import Model
 import numpy as np
 
-class SimpleConvAutoEncoder(AbstractModel):
+class SimpleConvAutoEncoder(AbstractAutoEncoderModel):
 
 		def __init__(self, config):
 
@@ -26,16 +26,39 @@ class SimpleConvAutoEncoder(AbstractModel):
 			picture = Input(shape = input_shape)
 
 			# encoded network
-			x = Conv2D(4, (3, 3), activation = 'relu', padding = 'same', name = 'enc_conv_1')(picture)
+			x = Conv2D(64, (3, 3), padding = 'same', name = 'enc_conv_1')(picture)
+			x = BatchNormalization()(x)
+			x = Activation('relu')(x)
 			x = MaxPooling2D((2, 2))(x)
-			x = Conv2D(8, (3, 3), activation = 'relu', padding = 'same', name = 'enc_conv_2')(x)
+
+			x = Conv2D(32, (3, 3), padding = 'same', name = 'enc_conv_2')(x)
+			x = BatchNormalization()(x)
+			x = Activation('relu')(x)
+			x = MaxPooling2D((2, 2))(x)
+
+			x = Conv2D(16, (3, 3), padding = 'same', name = 'enc_conv_3')(x)
+			x = BatchNormalization()(x)
+			x = Activation('relu')(x)
 			encoded = MaxPooling2D((2, 2))(x)
 
 			# decoded network
-			x = Conv2D(8, (3, 3), activation = 'relu', padding = 'same', name = 'dec_conv_1')(encoded)
+			x = Conv2D(16, (3, 3), padding = 'same', name = 'dec_conv_1')(encoded)
+			x = BatchNormalization()(x)
+			x = Activation('relu')(x)
 			x = UpSampling2D((2, 2))(x)
-			x = Conv2D(4, (3, 3), activation = 'relu', padding = 'same', name = 'dec_conv_2')(x)
+
+			x = Conv2D(32, (3, 3), padding = 'same', name = 'dec_conv_2')(x)
+			x = BatchNormalization()(x)
+			x = Activation('relu')(x)
 			x = UpSampling2D((2, 2))(x)
+
+			x = Conv2D(64, (3, 3), padding = 'same', name = 'dec_conv_3')(x)
+			x = BatchNormalization()(x)
+			x = Activation('relu')(x)
+			x = UpSampling2D((2, 2))(x)
+
+			x = Conv2D(3, (3, 3), padding = 'same', name = 'dec_conv_4')(x)
+			x = BatchNormalization()(x)
 			x = Flatten()(x)
 			x = Dense(np.prod(input_shape), activation = self.activation)(x)
 			decoded = Reshape((input_shape))(x)

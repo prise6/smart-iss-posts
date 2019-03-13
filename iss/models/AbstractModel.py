@@ -26,3 +26,10 @@ class AbstractModel:
 	def predict_one(self, x, batch_size = 1, verbose = 0, steps = None):
 		x = np.expand_dims(x, axis = 0)
 		return self.predict(x, batch_size, verbose, steps)
+
+
+class AbstractAutoEncoderModel(AbstractModel):
+
+	def __init__(self, save_directory, model_name):
+		super().__init__(save_directory, model_name)
+		self.encoded_layer = None
