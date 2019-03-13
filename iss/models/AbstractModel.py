@@ -32,4 +32,5 @@ class AbstractAutoEncoderModel(AbstractModel):
 
 	def __init__(self, save_directory, model_name):
 		super().__init__(save_directory, model_name)
-		self.encoded_layer = None
+		self.encoder_model = None
+		self.decoder_model = None
