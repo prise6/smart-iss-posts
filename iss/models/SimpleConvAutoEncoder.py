@@ -75,6 +75,11 @@ class SimpleConvAutoEncoder(AbstractAutoEncoderModel):
 			picture_dec = self.decoder_model(self.encoder_model(picture))
 			self.model = Model(picture, picture_dec)
 			
-			optimizer = Adam(lr = 0.001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
+			optimizer = Adam(lr = self.lr, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
 			
-			self.model.compile(optimizer = optimizer, loss = 'binary_crossentropy')
+			def my_loss(picture, picture_dec):
+				loss = K.mean(K.binary_crossentropy(picture, picture_dec))
+				return loss
+
+			# self.model.compile(optimizer = optimizer, loss = 'binary_crossentropy')
+			self.model.compile(optimizer = optimizer, loss = my_loss)
