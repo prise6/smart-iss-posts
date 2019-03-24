@@ -64,7 +64,7 @@ class ModelTrainer:
 			Tools.create_dir_if_not_exists(log_dir)
 
 			self.csv_logger = CSVLogger(
-				filename = '{}/training.log'.format(log_dir),
+				filename = '{}/{}training.log'.format(log_dir, self.model.model_name),
 				append = config['callbacks']['csv_logger']['append']
 			)
 			self.callbacks.extend([self.csv_logger])
