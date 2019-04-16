@@ -37,6 +37,11 @@ pipreqs:
 requirements: test_environment
 	pip install -U pip setuptools wheel
 	pip install -r requirements.txt
+	python -m pip install --upgrade ptvsd
+
+## debug
+debug: 
+	python -m ptvsd --host 0.0.0.0 --port 3000 --wait -m ${m}
 
 ## Write config template
 config_template:

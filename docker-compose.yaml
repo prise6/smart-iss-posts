@@ -3,7 +3,7 @@ services:
   jupyter:
     image: jupyter/tensorflow-notebook:7f1482f5a136
     container_name: jupyter-iss
-    command: start.sh jupyter lab --NotebookApp.base_url=/jupyter --NotebookApp.token='' --NotebookApp.password=''
+    command: start.sh jupyter lab --NotebookApp.base_url=/jupyter --NotebookApp.token='' --NotebookApp.password='' --NotebookApp.disable_check_xsrf=True
     user: root
     networks:
       - netproxy
@@ -17,6 +17,8 @@ services:
     environment:
       - NB_GID=1000
       - NB_USER=jovyan
+    ports:
+      - 127.0.0.1:3000:3000
 
   adminer:
     image: adminer:4.7
