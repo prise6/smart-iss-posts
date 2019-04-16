@@ -1,1 +1,2 @@
 from .AbstractClustering import AbstractClustering
+from .ClassicalClustering import ClassicalClustering
