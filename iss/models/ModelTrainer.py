@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from keras.callbacks import ModelCheckpoint, CSVLogger
-from iss.models.Callbacks import DisplayPictureCallback
+from iss.models.Callbacks import DisplayPictureCallback, TensorboardCallback
 from iss.tools.tools import Tools
 import keras
 
@@ -91,12 +91,11 @@ class ModelTrainer:
 		if 'tensorboard' in config['callbacks']:
 			log_dir = config['callbacks']['tensorboard']['log_dir']
 			Tools.create_dir_if_not_exists(log_dir)
-			self.callbacks.extend([keras.callbacks.TensorBoard(
+			self.callbacks.extend([TensorboardCallback(
 				log_dir = log_dir,
-				histogram_freq=0,
-				batch_size=32,
-				write_graph=False,
-				write_images = True
+				limit_image = config['callbacks']['tensorboard']['limit_image'],
+				model = self.model,
+				data_loader = self.data_loader.get_train_generator()
 			)])
 
 
