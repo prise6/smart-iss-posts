@@ -52,13 +52,21 @@ config_template:
 # PROJECT RULES                                                                 #
 #################################################################################
 
-## Make Dataset
-data: requirements
-	$(PYTHON_INTERPRETER) src/data/make_dataset.py
-
 ## Sync photos with my refs
 sync_collections: iss/data/sync_collections.sh
-	$(PYTHON_INTERPRETER) iss/data/sync_collections.sh
+	/bin/sh iss/data/sync_collections.sh
+
+populate_db:
+	$(PYTHON_INTERPRETER) -m iss.exec.bdd
+
+sampling:
+	$(PYTHON_INTERPRETER) -m iss.exec.sampling
+
+training:
+	$(PYTHON_INTERPRETER) -m iss.exec.training
+
+exec_clustering:
+	$(PYTHON_INTERPRETER) -m iss.exec.clustering
 
 
 #################################################################################

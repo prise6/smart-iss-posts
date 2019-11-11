@@ -16,14 +16,13 @@ class SimpleConvAutoEncoder(AbstractAutoEncoderModel):
 
 			super().__init__(save_directory, model_name)
 
+			np.random.seed(42)
 			self.activation = config['activation']
 			self.input_shape = (config['input_height'], config['input_width'], config['input_channel'])
 			self.latent_shape = (config['latent_height'], config['latent_width'], config['latent_channel'])
 			self.lr = config['learning_rate']
 			self.build_model()
 
-		def load(self, which = 'final_model'):
-			self.model = load_model('{}/{}.hdf5'.format(self.save_directory, which), custom_objects= {'my_loss':self.my_loss})
 
 		def build_model(self):
 			input_shape = self.input_shape
@@ -80,8 +79,6 @@ class SimpleConvAutoEncoder(AbstractAutoEncoderModel):
 			
 			optimizer = Adam(lr = self.lr, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
 			
-
-
 			# self.model.compile(optimizer = optimizer, loss = 'binary_crossentropy')
 			self.model.compile(optimizer = optimizer, loss = self.my_loss)
 

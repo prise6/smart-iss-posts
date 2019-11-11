@@ -59,12 +59,13 @@ class ModelTrainer:
 
 	def init_callbacks(self, config):
 
+
 		if 'csv_logger' in config['callbacks']:
 			log_dir = config['callbacks']['csv_logger']['directory']
 			Tools.create_dir_if_not_exists(log_dir)
 
 			self.csv_logger = CSVLogger(
-				filename = '{}/{}training.log'.format(log_dir, self.model.model_name),
+				filename = '{}/{}_training.log'.format(log_dir, self.model.model_name),
 				append = config['callbacks']['csv_logger']['append']
 			)
 			self.callbacks.extend([self.csv_logger])
@@ -86,5 +87,17 @@ class ModelTrainer:
 				epoch_laps = config['callbacks']['display_picture']['epoch_laps']
 			)
 			self.callbacks.extend([self.picture_displayer])
+		
+		if 'tensorboard' in config['callbacks']:
+			log_dir = config['callbacks']['tensorboard']['log_dir']
+			Tools.create_dir_if_not_exists(log_dir)
+			self.callbacks.extend([keras.callbacks.TensorBoard(
+				log_dir = log_dir,
+				histogram_freq=0,
+				batch_size=32,
+				write_graph=False,
+				write_images = True
+			)])
+
 
 		return self

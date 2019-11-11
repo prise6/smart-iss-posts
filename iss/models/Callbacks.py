@@ -18,8 +18,6 @@ class DisplayPictureCallback(Callback):
 	def on_epoch_end(self, epoch, logs):
 		if epoch % self.epoch_laps == 0:
 
-			print("ok")
-
 			input_pict = self.data_loader.next()[0][1]
 			output_pict = self.model_class.predict_one(input_pict)
 

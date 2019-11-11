@@ -8,20 +8,21 @@ import re
 
 class CollectionManagerFromDirectory:
 
-	def __init__(self, config):
+	def __init__(self, config, sampling_type = 'autoencoder'):
 		self.config = config
-		self.dir = self.config.get('directory')['collections']
+		config_sampling = self.config.get('sampling')[sampling_type]
+		self.dir = self.config.get('directory')[config_sampling['directory']['from']]
 
 		jpg_regex = re.compile(".*jpg$")
 		self.pictures_id = [pict for pict in os.listdir(self.dir) if jpg_regex.match(pict)]
 		
-		self.dir_base = self.config.get('directory')['autoencoder']['base']
-		self.dir_train = self.config.get('directory')['autoencoder']['train']
-		self.dir_test = self.config.get('directory')['autoencoder']['test']
-		self.dir_valid = self.config.get('directory')['autoencoder']['valid']
+		self.dir_base = config_sampling['directory']['base']
+		self.dir_train = config_sampling['directory']['train']
+		self.dir_test = config_sampling['directory']['test']
+		self.dir_valid = config_sampling['directory']['valid']
 		
-		self.seed = self.config.get('training')['seed']
-		self.proportions = self.config.get('training')['proportions']
+		self.seed = config_sampling['seed']
+		self.proportions = config_sampling['proportions']
 		self.volumes = {}
 
 		self.shuffle()
