@@ -18,6 +18,7 @@ from iss.tools import Config
 from iss.tools import Tools
 from iss.models import SimpleConvAutoEncoder
 from iss.clustering import ClassicalClustering
+from iss.clustering import AdvancedClustering
 from dotenv import find_dotenv, load_dotenv
 import numpy as np
 
@@ -149,7 +150,3 @@ plt.scatter(clustering.pca_reduction[:, 0], clustering.pca_reduction[:, 1], c = 
 
 #%%
 plt.scatter(clustering.pca_reduction[np.array(col) == 1, 0], clustering.pca_reduction[np.array(col) == 1, 1])
-
-
-
-#%%
