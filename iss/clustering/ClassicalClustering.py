@@ -6,8 +6,10 @@ from iss.clustering import AbstractClustering
 from sklearn.decomposition import PCA
 from sklearn.cluster import KMeans
 from sklearn.cluster import AgglomerativeClustering
+from sklearn.metrics import silhouette_samples
 from iss.tools import Tools
 from sklearn.externals import joblib
+from sklearn.manifold import TSNE
 
 class ClassicalClustering(AbstractClustering):
 
@@ -31,8 +33,13 @@ class ClassicalClustering(AbstractClustering):
 		self.cah_args = self.config['CAH']
 		self.cah_labels = None
 		self.cah_save_name = "cah_model_v%s.pkl" % (self.config['version'])
+		
+		self.tsne_fit = None
+		self.tsne_args = self.config['TSNE']
+		self.tsne_embedding = None
 
 		self.final_labels = None
+		self.silhouette_score_labels = {}
 
 
 	def compute_pca(self):
@@ -62,11 +69,23 @@ class ClassicalClustering(AbstractClustering):
 		self.cah_labels = self.cah_fit.labels_
 		return self
 
-	def compute_cah_labels(self):
-		self.final_labels = [self.cah_labels[old_cl] for old_cl in self.kmeans_labels]
+	def compute_final_labels(self):
+		self.final_labels = np.array([self.cah_labels[old_cl] for old_cl in self.kmeans_labels])
 
-	def get_zip_results(self):
-		return zip(self.pictures_id, self.final_labels, self.kmeans_labels, self.pictures_np)
+	def compute_tsne(self):
+		self.tsne_fit = TSNE(**self.tsne_args)
+		self.tsne_embedding = self.tsne_fit.fit_transform(self.pca_reduction)
+		return self
+		
+	def get_results(self):
+		return list(zip(self.pictures_id, self.final_labels, self.kmeans_labels, self.pictures_np))
+
+	def compute_silhouette_score(self):
+		self.silhouette_score = silhouette_samples(self.pictures_np, self.final_labels)
+		self.silhouette_score_labels = {cluster: np.mean(self.silhouette_score[self.final_labels == cluster]) for 
+		cluster in np.unique(self.final_labels)}
+		return self.silhouette_score_labels
+
 
 	def save(self):
 		Tools.create_dir_if_not_exists(self.config['save_directory'])
