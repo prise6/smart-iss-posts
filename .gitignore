@@ -94,3 +94,11 @@ config/*
 # models dir
 models/
 !iss/models
+models_floyd
+
+# floyd
+floyd_requirements.txt
+.floydexpt
+.floydignore
+.env-floyd
+floyd.yml
