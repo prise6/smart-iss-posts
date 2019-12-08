@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 from iss.tools import Tools
 
 class AbstractClustering:
@@ -6,13 +7,13 @@ class AbstractClustering:
     def __init__(self, config, pictures_id, pictures_np):
 
         self.config = config
+        self.save_directory = os.path.join(self.config['save_directory'], '%s_%s_%s' % (self.config['model']['type'], self.config['model']['name'], self.config['version']))
         self.pictures_id = pictures_id
         self.pictures_np = pictures_np
         self.final_labels = None
         self.colors = None
 
-        if self.config['save_directory']:
-            Tools.create_dir_if_not_exists(self.config['save_directory'])
+        Tools.create_dir_if_not_exists(self.save_directory)
 
     def compute_final_labels(self):
         raise NotImplementedError

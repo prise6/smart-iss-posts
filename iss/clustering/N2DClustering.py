@@ -21,12 +21,13 @@ class N2DClustering(AbstractClustering):
         self.umap_args = self.config['umap']
         self.umap_fit = None
         self.umap_embedding = None
+        self.umap_save_name = 'UMAP_model.pkl'
 
         self.kmeans_fit = None
         self.kmeans_args = self.config['kmeans']
         self.kmeans_labels = None
         self.kmeans_centers = []
-        self.kmeans_save_name = "kmeans_model_v%s.pkl" % (self.config['version'])
+        self.kmeans_save_name = "kmeans_model.pkl"
 
         
     def compute_umap(self):
@@ -50,3 +51,12 @@ class N2DClustering(AbstractClustering):
         cluster in np.unique(self.final_labels)}
         return self.silhouette_score_labels
 
+    def save(self):
+        Tools.create_dir_if_not_exists(self.save_directory)
+
+        joblib.dump(self.umap_fit, os.path.join(self.save_directory, self.umap_save_name))
+        joblib.dump(self.kmeans_fit, os.path.join(self.save_directory, self.kmeans_save_name))
+
+    def load(self):
+        self.umap_fit = joblib.load(os.path.join(self.save_directory, self.pca_save_name))
+        self.kmeans_fit = joblib.load(os.path.join(self.save_directory, self.kmeans_save_name))

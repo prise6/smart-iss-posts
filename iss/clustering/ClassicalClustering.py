@@ -20,19 +20,19 @@ class ClassicalClustering(AbstractClustering):
 		self.pca_fit = None
 		self.pca_args = self.config['PCA']
 		self.pca_reduction = None
-		self.pca_save_name = "PCA_model_v%s.pkl" % (self.config['version'])
+		self.pca_save_name = "PCA_model.pkl"
 
 		self.kmeans_fit = None
 		self.kmeans_args = self.config['kmeans']
 		self.kmeans_labels = None
 		self.kmeans_centers = []
-		self.kmeans_save_name = "kmeans_model_v%s.pkl" % (self.config['version'])
+		self.kmeans_save_name = "kmeans_model.pkl"
 
 
 		self.cah_fit = None
 		self.cah_args = self.config['CAH']
 		self.cah_labels = None
-		self.cah_save_name = "cah_model_v%s.pkl" % (self.config['version'])
+		self.cah_save_name = "cah_model.pkl"
 		
 		self.tsne_fit = None
 		self.tsne_args = self.config['TSNE']
@@ -88,15 +88,15 @@ class ClassicalClustering(AbstractClustering):
 
 
 	def save(self):
-		Tools.create_dir_if_not_exists(self.config['save_directory'])
+		Tools.create_dir_if_not_exists(self.save_directory)
 
-		joblib.dump(self.pca_fit, os.path.join(self.config['save_directory'], self.pca_save_name))
-		joblib.dump(self.kmeans_fit, os.path.join(self.config['save_directory'], self.kmeans_save_name))
-		joblib.dump(self.cah_fit, os.path.join(self.config['save_directory'], self.cah_save_name))
+		joblib.dump(self.pca_fit, os.path.join(self.save_directory, self.pca_save_name))
+		joblib.dump(self.kmeans_fit, os.path.join(self.save_directory, self.kmeans_save_name))
+		joblib.dump(self.cah_fit, os.path.join(self.save_directory, self.cah_save_name))
 
 	def load(self):
-		self.pca_fit = joblib.load(os.path.join(self.config['save_directory'], self.pca_save_name))
-		self.kmeans_fit = joblib.load(os.path.join(self.config['save_directory'], self.kmeans_save_name))
-		self.cah_fit = joblib.load(os.path.join(self.config['save_directory'], self.cah_save_name))
+		self.pca_fit = joblib.load(os.path.join(self.save_directory, self.pca_save_name))
+		self.kmeans_fit = joblib.load(os.path.join(self.save_directory, self.kmeans_save_name))
+		self.cah_fit = joblib.load(os.path.join(self.save_directory, self.cah_save_name))
 
 
