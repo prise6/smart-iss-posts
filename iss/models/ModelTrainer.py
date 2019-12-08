@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from keras.callbacks import ModelCheckpoint, CSVLogger
-from iss.models.Callbacks import DisplayPictureCallback, TensorboardCallback
+from iss.models.Callbacks import DisplayPictureCallback, TensorboardCallback, FloydhubTrainigMetricsCallback
 from iss.tools.tools import Tools
 import keras
 
@@ -98,5 +98,7 @@ class ModelTrainer:
 				data_loader = self.data_loader.get_train_generator()
 			)])
 
+		if 'floyd' in config['callbacks']:
+			self.callbacks.extend([FloydhubTrainigMetricsCallback()])
 
 		return self

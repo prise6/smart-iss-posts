@@ -42,7 +42,6 @@ class TensorboardCallback(Callback):
         super(TensorboardCallback, self).__init__()
 
     def on_epoch_end(self, epoch, logs=None):
-        print(logs)
         image_summaries = []
         
         for input_pict in self.data_loader.next()[0][:self.limit_image]:
@@ -74,4 +73,11 @@ class TensorboardCallback(Callback):
             self.writer.add_summary(summary, index)
         self.writer.flush()
 
+
+class FloydhubTrainigMetricsCallback(Callback):
+    """FloydHub Training Metric Integration"""
+    def on_epoch_end(self, epoch, logs=None):
+        """Print Training Metrics"""
+        print('{{"metric": "loss", "value": {}, "epoch": {}}}'.format(logs.get('loss'), epoch))
+        print('{{"metric": "val_loss", "value": {}, "epoch": {}}}'.format(logs.get('val_loss'), epoch))
 
