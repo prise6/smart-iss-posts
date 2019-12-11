@@ -51,6 +51,9 @@ class N2DClustering(AbstractClustering):
         cluster in np.unique(self.final_labels)}
         return self.silhouette_score_labels
 
+    def predict_embedding(self, pictures_np):
+        return self.umap_fit.transform(pictures_np)
+
     def save(self):
         Tools.create_dir_if_not_exists(self.save_directory)
 
@@ -58,5 +61,5 @@ class N2DClustering(AbstractClustering):
         joblib.dump(self.kmeans_fit, os.path.join(self.save_directory, self.kmeans_save_name))
 
     def load(self):
-        self.umap_fit = joblib.load(os.path.join(self.save_directory, self.pca_save_name))
+        self.umap_fit = joblib.load(os.path.join(self.save_directory, self.umap_save_name))
         self.kmeans_fit = joblib.load(os.path.join(self.save_directory, self.kmeans_save_name))

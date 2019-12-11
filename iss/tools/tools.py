@@ -2,6 +2,7 @@
 
 import PIL
 import os
+import re
 import numpy as np
 from io import BytesIO
 import base64
@@ -57,18 +58,29 @@ class Tools:
 		return path
 
 	@staticmethod
-	def encoded_pictures_from_generator(generator, model):
+	def encoded_pictures_from_generator(generator, model, by_step=False):
+		if by_step:
+			return Tools.encoded_pictures_from_generator_by_step(generator, model)
 
 		predictions_list = []
 		predictions_id = []
 		for imgs in generator:
-			predictions_id.append(imgs[0])
-			predictions_list.append(model.get_encoded_prediction(imgs[1]))
+			tmp_id = [os.path.splitext(os.path.basename(id))[0] for id in imgs[0]]
+			tmp_pred = model.get_encoded_prediction(imgs[1])
+			predictions_id += tmp_id
+			predictions_list.append(tmp_pred)
 			
 		predictions = np.concatenate(tuple(predictions_list), axis = 0)
-		predictions_id = [os.path.splitext(os.path.basename(id))[0] for sub_id in predictions_id for id in sub_id]
 
 		return predictions_id, predictions
+
+	@staticmethod
+	def encoded_pictures_from_generator_by_step(generator, model):
+		for imgs in generator:
+			# tmp_id = [os.path.splitext(os.path.basename(id))[0] for sub_id in imgs[0] for id in sub_id]
+			tmp_id = [os.path.splitext(os.path.basename(id))[0] for id in imgs[0]]
+			tmp_pred = model.get_encoded_prediction(imgs[1])
+			yield (tmp_id, tmp_pred)
 
 	@staticmethod
 	def read_np_picture(path, target_size = None, scale = 1):
@@ -79,11 +91,12 @@ class Tools:
 		return img_np
 
 	@staticmethod
-	def list_directory_filenames(path):
+	def list_directory_filenames(path, pattern = ".*jpg$"):
 		filenames = os.listdir(path)
 		np.random.seed(33213)
 		np.random.shuffle(filenames)
-		filenames = [os.path.join(path,f) for f in filenames]
+		pattern_regex = re.compile(pattern)
+		filenames = [os.path.join(path,f) for f in filenames if pattern_regex.match(f)]
 
 		return filenames
 
@@ -139,3 +152,46 @@ class Tools:
 
 		# Plot the corresponding dendrogram
 		dendrogram(linkage_matrix, **kwargs)
+
+	@staticmethod
+	def load_model(config, model_type, model_name):
+		"""
+		Load model according to config
+		"""
+		from iss.models import SimpleConvAutoEncoder, SimpleAutoEncoder
+
+		config.get('models')[model_type]['model_name'] = model_name
+
+		if model_type == 'simple_conv':
+			model = SimpleConvAutoEncoder(config.get('models')[model_type])
+		elif model_type == 'simple':
+			model = SimpleAutoEncoder(config.get('models')[model_type])
+		else:
+			raise Exception
+
+		model_config = config.get('models')[model_type]
+
+		return model, model_config
+
+	@staticmethod
+	def load_latent_representation(config, model, model_config, filenames, batch_size, n_batch, by_step):
+		"""
+		load images and predictions
+		"""
+		if by_step:
+			return Tools.load_latent_representation_by_step(config, model, model_config, filenames, batch_size, n_batch)
+		
+		generator_imgs = Tools.generator_np_picture_from_filenames(filenames, target_size = (model_config['input_height'], model_config['input_width']), batch = batch_size, nb_batch = n_batch)
+
+		pictures_id, pictures_preds = Tools.encoded_pictures_from_generator(generator_imgs, model, by_step)
+		intermediate_output = pictures_preds.reshape((pictures_preds.shape[0], -1))
+			
+		return pictures_id, intermediate_output
+
+	@staticmethod
+	def load_latent_representation_by_step(config, model, model_config, filenames, batch_size, n_batch):
+		generator_imgs = Tools.generator_np_picture_from_filenames(filenames, target_size = (model_config['input_height'], model_config['input_width']), batch = batch_size, nb_batch = n_batch)
+
+		for pictures_id, pictures_preds in Tools.encoded_pictures_from_generator(generator_imgs, model, True):
+			intermediate_output = pictures_preds.reshape((pictures_preds.shape[0], -1))
+			yield pictures_id, intermediate_output

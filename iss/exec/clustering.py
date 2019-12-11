@@ -17,44 +17,6 @@ from iss.clustering import ClassicalClustering, AdvancedClustering, N2DClusterin
 _DEBUG = True
 
 
-def load_model(config, clustering_type):
-    """
-    Load model according to config
-    """
-
-    model_type = config.get('clustering')[clustering_type]['model']['type']
-    model_name = config.get('clustering')[clustering_type]['model']['name']
-    config.get('models')[model_type]['model_name'] = model_name
-
-    if model_type == 'simple_conv':
-        model = SimpleConvAutoEncoder(config.get('models')[model_type])
-    elif model_type == 'simple':
-        model = SimpleAutoEncoder(config.get('models')[model_type])
-    else:
-        raise Exception
-
-    model_config = config.get('models')[model_type]
-
-    return model, model_config
-
-
-def load_images(config, clustering_type, model, model_config, batch_size, n_batch):
-    """
-    load images and predictions
-    """
-    model_type = config.get('clustering')[clustering_type]['model']['type']
-    filenames = Tools.list_directory_filenames(os.path.join(config.get('sampling')['autoencoder']['directory']['train']))
-    generator_imgs = Tools.generator_np_picture_from_filenames(filenames, target_size = (model_config['input_height'], model_config['input_width']), batch = batch_size, nb_batch = n_batch)
-
-    pictures_id, pictures_preds = Tools.encoded_pictures_from_generator(generator_imgs, model)
-    if model_type in ['simple_conv']:
-        intermediate_output = pictures_preds.reshape((pictures_preds.shape[0], model_config['latent_width']*model_config['latent_height']*model_config['latent_channel']))
-    else:
-        intermediate_output = pictures_preds
-    
-    return pictures_id, intermediate_output
-
-
 def run_clustering(config, clustering_type, pictures_id, intermediate_output):
     """
     Apply clustering on images
@@ -217,9 +179,9 @@ def plot_mosaics(config, clustering_type, clustering, output_image_width, output
 
 
 def main():
-    _CLUSTERING_TYPE = 'classical'
+    _CLUSTERING_TYPE = 'n2d'
     _BATCH_SIZE = 496
-    _N_BATCH = 1
+    _N_BATCH = 10
     _PLOTS = True
     _MOSAICS = True
     _SILHOUETTE = True
@@ -228,8 +190,9 @@ def main():
     _MOSAIC_NROW = 10
     _MOSAIC_NCOL_MAX = 10
 
-    model, model_config = load_model(CONFIG, _CLUSTERING_TYPE)
-    pictures_id, intermediate_output = load_images(CONFIG, _CLUSTERING_TYPE, model, model_config, _BATCH_SIZE, _N_BATCH)
+    model, model_config = Tools.load_model(CONFIG, CONFIG.get('clustering')[_CLUSTERING_TYPE]['model']['type'], CONFIG.get('clustering')[_CLUSTERING_TYPE]['model']['name'])
+    filenames = Tools.list_directory_filenames(CONFIG.get('sampling')['autoencoder']['directory']['train'])
+    pictures_id, intermediate_output = Tools.load_latent_representation(CONFIG, model, model_config, filenames, _BATCH_SIZE, _N_BATCH, False)
             
     clustering = run_clustering(CONFIG, _CLUSTERING_TYPE, pictures_id, intermediate_output)
     

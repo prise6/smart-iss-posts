@@ -29,6 +29,9 @@ class AbstractClustering:
         self.colors = [Tools.get_color_from_label(label, n_classes) for label in self.final_labels]
         return self
 
+    def predict_embedding(self):
+        raise NotImplementedError
+           
     def save(self):
         raise NotImplementedError
 
