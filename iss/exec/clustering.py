@@ -11,7 +11,7 @@ from bokeh.models import HoverTool, ColumnDataSource, CategoricalColorMapper
 from iss.init_config import CONFIG
 from iss.tools import Tools
 from iss.models import SimpleConvAutoEncoder, SimpleAutoEncoder
-from iss.clustering import ClassicalClustering, AdvancedClustering, N2DClustering
+from iss.clustering import ClassicalClustering, AdvancedClustering, N2DClustering, DBScanClustering
 
 
 _DEBUG = True
@@ -45,6 +45,14 @@ def run_clustering(config, clustering_type, pictures_id, intermediate_output):
         clustering.compute_kmeans()
         clustering.compute_final_labels()
         clustering.compute_colors()
+    elif clustering_type == 'dbscan':
+        if _DEBUG:
+            print("HDBSCAN Clustering")
+        clustering = DBScanClustering(config.get('clustering')['dbscan'], pictures_id, intermediate_output)
+        clustering.compute_umap()
+        clustering.compute_dbscan()
+        clustering.compute_final_labels()
+        clustering.compute_colors()
 
     return clustering
 
@@ -71,7 +79,7 @@ def run_plots(config, clustering_type, clustering):
         ax.add_artist(legend1)
         plt.savefig(os.path.join(clustering.save_directory, 'tsne_clusters.png'))
 
-    if clustering_type in ['n2d']:
+    if clustering_type in ['n2d', 'dbscan']:
         ## Graphs of TSNE and final clusters
         fig, ax = plt.subplots(figsize=(24, 14))
         classes = clustering.final_labels
@@ -80,12 +88,12 @@ def run_plots(config, clustering_type, clustering):
         ax.add_artist(legend1)
         plt.savefig(os.path.join(clustering.save_directory, 'umap_clusters.png'))
 
-    if clustering_type in ['n2d', 'classical']:
+    if clustering_type in ['n2d', 'classical', 'dbscan']:
         filenames = [os.path.join(config.get('directory')['collections'], "%s.jpg" % one_res[0]) for one_res in clustering.get_results()]
         images_array = [Tools.read_np_picture(img_filename, target_size = (54, 96)) for img_filename in filenames]
         base64_images = [Tools.base64_image(img) for img in images_array]
 
-        if clustering_type == 'n2d':
+        if clustering_type in ['n2d', 'dbscan']:
             x = clustering.umap_embedding[:, 0]
             y = clustering.umap_embedding[:, 1]
             html_file = 'umap_bokeh.html'
@@ -181,7 +189,7 @@ def plot_mosaics(config, clustering_type, clustering, output_image_width, output
 def main():
     _CLUSTERING_TYPE = 'n2d'
     _BATCH_SIZE = 496
-    _N_BATCH = 10
+    _N_BATCH = 5
     _PLOTS = True
     _MOSAICS = True
     _SILHOUETTE = True

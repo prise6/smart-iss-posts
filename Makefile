@@ -70,6 +70,15 @@ exec_clustering:
 
 
 #################################################################################
+# OUTSIDE CONTAINER                                                             #
+#################################################################################
+
+maximize_test:
+	cp $(PROJECT_DIR)/data/raw/collections/20180211-130001.jpg $(PROJECT_DIR)/data/isr/input/sample/
+	docker run -v "$(PROJECT_DIR)/data/isr:/home/isr/data" -v "$(PROJECT_DIR)/../image-super-resolution/weights:/home/isr/weights" -v "$(PROJECT_DIR)/config/config_isr.yml:/home/isr/config.yml" -it isr -d -p -c config.yml
+
+
+#################################################################################
 # FLOYDHUB                                                                      #
 #################################################################################
 

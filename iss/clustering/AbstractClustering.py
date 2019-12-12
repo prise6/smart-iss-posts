@@ -31,6 +31,9 @@ class AbstractClustering:
 
     def predict_embedding(self):
         raise NotImplementedError
+
+    def predict_label(self):
+        raise NotImplementedError
            
     def save(self):
         raise NotImplementedError

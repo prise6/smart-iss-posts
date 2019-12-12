@@ -3,15 +3,16 @@
 import os
 import numpy as np
 import umap
+import hdbscan
 from iss.tools import Tools
 from iss.clustering import AbstractClustering
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_samples
 from sklearn.externals import joblib
 
-class N2DClustering(AbstractClustering):
+class DBScanClustering(AbstractClustering):
     """
-    Cf: https://github.com/rymc/n2d
+    Cf: https://umap-learn.readthedocs.io/en/latest/clustering.html
     """
 
     def __init__(self, config, pictures_id = None, pictures_np = None):
@@ -23,11 +24,11 @@ class N2DClustering(AbstractClustering):
         self.umap_embedding = None
         self.umap_save_name = 'UMAP_model.pkl'
 
-        self.kmeans_fit = None
-        self.kmeans_args = self.config['kmeans']
-        self.kmeans_labels = None
-        self.kmeans_centers = []
-        self.kmeans_save_name = "kmeans_model.pkl"
+        self.dbscan_fit = None
+        self.dbscan_args = self.config['dbscan']
+        self.dbscan_labels = None
+        self.dbscan_centers = []
+        self.dbscan_save_name = "dbscan_model.pkl"
 
         
     def compute_umap(self):
@@ -35,14 +36,14 @@ class N2DClustering(AbstractClustering):
         self.umap_embedding = self.umap_fit.fit_transform(self.pictures_np)
         return self
 
-    def compute_kmeans(self):
-        self.kmeans_fit = KMeans(**self.kmeans_args)
-        self.kmeans_fit.fit(self.umap_embedding)
-        self.kmeans_labels = self.kmeans_fit.labels_
+    def compute_dbscan(self):
+        self.dbscan_fit = hdbscan.HDBSCAN(**self.dbscan_args)
+        self.dbscan_fit.fit(self.umap_embedding)
+        self.dbscan_labels = self.dbscan_fit.labels_
         return self
 
     def compute_final_labels(self):
-        self.final_labels  = self.kmeans_labels
+        self.final_labels  = self.dbscan_labels
         return self
 
     def compute_silhouette_score(self):
@@ -53,16 +54,13 @@ class N2DClustering(AbstractClustering):
 
     def predict_embedding(self, pictures_np):
         return self.umap_fit.transform(pictures_np)
-    
-    def predict_label(self, pictures_embedding):
-        return self.kmeans_fit.predict(pictures_embedding)
 
     def save(self):
         Tools.create_dir_if_not_exists(self.save_directory)
 
         joblib.dump(self.umap_fit, os.path.join(self.save_directory, self.umap_save_name))
-        joblib.dump(self.kmeans_fit, os.path.join(self.save_directory, self.kmeans_save_name))
+        joblib.dump(self.dbscan_fit, os.path.join(self.save_directory, self.dbscan_save_name))
 
     def load(self):
         self.umap_fit = joblib.load(os.path.join(self.save_directory, self.umap_save_name))
-        self.kmeans_fit = joblib.load(os.path.join(self.save_directory, self.kmeans_save_name))
+        self.dbscan_fit = joblib.load(os.path.join(self.save_directory, self.dbscan_save_name))

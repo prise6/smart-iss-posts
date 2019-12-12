@@ -4,11 +4,14 @@ import PIL
 import os
 import re
 import numpy as np
+import mysql.connector
 from io import BytesIO
 import base64
 from scipy.cluster.hierarchy import dendrogram
 from keras_preprocessing.image.utils import load_img
 import matplotlib as plt
+
+from iss.data.DataBaseManager import MysqlDataBaseManager
 
 
 class Tools:
@@ -172,16 +175,35 @@ class Tools:
 		model_config = config.get('models')[model_type]
 
 		return model, model_config
+	
+	@staticmethod
+	def load_clustering(config, clustering_type, clustering_version, clustering_model_type, clustering_model_name):
+		from iss.clustering import ClassicalClustering, AdvancedClustering, N2DClustering
+
+		clustering_config = config.get('clustering')[clustering_type]
+		clustering_config['version'] = clustering_version
+		clustering_config['model']['type'] = clustering_model_type
+		clustering_config['model']['name'] = clustering_model_name
+
+		if clustering_type == 'n2d':
+			clustering = N2DClustering(clustering_config)
+		elif clustering_type == 'classical':
+			clustering = ClassicalClustering(clustering_config)
+		else:
+			raise Exception
+
+		clustering.load()
+		return clustering, clustering_config
 
 	@staticmethod
-	def load_latent_representation(config, model, model_config, filenames, batch_size, n_batch, by_step):
+	def load_latent_representation(config, model, model_config, filenames, batch_size, n_batch, by_step, scale=1./255):
 		"""
 		load images and predictions
 		"""
 		if by_step:
 			return Tools.load_latent_representation_by_step(config, model, model_config, filenames, batch_size, n_batch)
 		
-		generator_imgs = Tools.generator_np_picture_from_filenames(filenames, target_size = (model_config['input_height'], model_config['input_width']), batch = batch_size, nb_batch = n_batch)
+		generator_imgs = Tools.generator_np_picture_from_filenames(filenames, target_size = (model_config['input_height'], model_config['input_width']), scale=scale, batch = batch_size, nb_batch = n_batch)
 
 		pictures_id, pictures_preds = Tools.encoded_pictures_from_generator(generator_imgs, model, by_step)
 		intermediate_output = pictures_preds.reshape((pictures_preds.shape[0], -1))
@@ -189,9 +211,22 @@ class Tools:
 		return pictures_id, intermediate_output
 
 	@staticmethod
-	def load_latent_representation_by_step(config, model, model_config, filenames, batch_size, n_batch):
-		generator_imgs = Tools.generator_np_picture_from_filenames(filenames, target_size = (model_config['input_height'], model_config['input_width']), batch = batch_size, nb_batch = n_batch)
+	def load_latent_representation_by_step(config, model, model_config, filenames, batch_size, n_batch, scale=1./255):
+		generator_imgs = Tools.generator_np_picture_from_filenames(filenames, target_size = (model_config['input_height'], model_config['input_width']), scale=scale, batch = batch_size, nb_batch = n_batch)
 
 		for pictures_id, pictures_preds in Tools.encoded_pictures_from_generator(generator_imgs, model, True):
 			intermediate_output = pictures_preds.reshape((pictures_preds.shape[0], -1))
 			yield pictures_id, intermediate_output
+
+	@staticmethod
+	def create_db_manager(config):
+
+		CON_MYSQL = mysql.connector.connect(
+			host = config.get('mysql')['database']['server'],
+			user = config.get('mysql')['database']['user'],
+			passwd = config.get('mysql')['database']['password'],
+			database = config.get('mysql')['database']['name'],
+			port = config.get('mysql')['database']['port']
+		)
+
+		return MysqlDataBaseManager(CON_MYSQL, config)

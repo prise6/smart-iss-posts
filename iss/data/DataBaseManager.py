@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import numpy as np
 
 
 class MysqlDataBaseManager:
@@ -45,6 +46,7 @@ CREATE TABLE IF NOT EXISTS `iss`.`pictures_embedding` (
   `pictures_id` VARCHAR( 15 ) ,
   `pictures_x` FLOAT(8, 4),
   `pictures_y` FLOAT(8, 4),
+  `label` INT NULL,
   `clustering_type` VARCHAR(15),
   `clustering_version` VARCHAR(5),
   `clustering_model_type` VARCHAR(15),
@@ -68,9 +70,17 @@ CREATE TABLE IF NOT EXISTS `iss`.`pictures_embedding` (
 
 	def insert_row_pictures_embedding(self, array):
 
-		sql_insert_template = "INSERT INTO `iss`.`pictures_embedding` (pictures_id, pictures_x, pictures_y, clustering_type, clustering_version, clustering_model_type, clustering_model_name) VALUES (%s, %s, %s, %s, %s, %s, %s);"
+		sql_insert_template = "INSERT INTO `iss`.`pictures_embedding` (pictures_id, pictures_x, pictures_y, label, clustering_type, clustering_version, clustering_model_type, clustering_model_name) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);"
 
 		self.cursor.executemany(sql_insert_template, array)
 		self.conn.commit()
 
 		return self.cursor.rowcount
+
+	def select_close_embedding(self, x, y, limit):
+		sql_req = "SELECT pictures_id, SQRT(POWER(pictures_x - %s, 2) + POWER(pictures_y - %s, 2)) as distance FROM iss.pictures_embedding ORDER BY distance ASC LIMIT %s"
+
+		self.cursor.execute(sql_req, (float(np.round(x, 4)), float(np.round(y, 4)), limit))
+
+		return self.cursor.fetchall()
+
