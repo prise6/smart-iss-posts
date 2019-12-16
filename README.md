@@ -57,3 +57,23 @@ Project Organization
 --------
 
 <p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
+
+
+## Size
+
+original size : 1280x720
+cut size : 48x27
+
+inch = 2.54cm 
+150dpi
+300dpi
+http://www.altelia.fr/actualites/calculateur-resolution-definition-format.htm
+https://fr.wikipedia.org/wiki/Point_par_pouce
+
+
+2880px X 4320px
+donne : (en 150 dpi)
+
+48.77cm x 73.15cm
+
+bordure de 60px pour 1 cm en 150dpi

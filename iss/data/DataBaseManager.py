@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import numpy as np
+import pandas as pd
 
 
 class MysqlDataBaseManager:
@@ -84,3 +85,32 @@ CREATE TABLE IF NOT EXISTS `iss`.`pictures_embedding` (
 
 		return self.cursor.fetchall()
 
+	def select_df(self, req, args):
+		self.cursor.execute(req, args)
+		res = self.cursor.fetchall()
+		df_res = pd.DataFrame(res, columns=self.cursor.column_names)
+
+		return df_res
+
+	def create_posters_table(self, force = False):
+		if force:
+			self.cursor.execute("DROP TABLE IF EXISTS `iss`.`posters`;")
+
+		self.cursor.execute("""
+CREATE TABLE IF NOT EXISTS `iss`.`posters` (
+  `poster_id` VARCHAR(32),
+  `version` VARCHAR(5),
+  `position` VARCHAR(5),
+  `pictures_id` VARCHAR(15),
+  UNIQUE KEY `unique_key` (`poster_id`, `version`,`position`, `pictures_id`),
+  UNIQUE KEY `unique_key_2` (`poster_id`, `version`,`position`)
+) ENGINE = MYISAM ;
+			""")
+
+	def insert_row_poster(self, array):
+		sql_insert_template = "INSERT INTO `iss`.`posters` (poster_id, version, position, pictures_id) VALUES (%s, %s, %s, %s);"
+
+		self.cursor.executemany(sql_insert_template, array)
+		self.conn.commit()
+
+		return self.cursor.rowcount
