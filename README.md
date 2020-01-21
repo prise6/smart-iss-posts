@@ -5,6 +5,13 @@ _Work In Progress_
 
 Project to identify nice pics from live ISS
 
+## Poster examples
+
+![Poster 1](data/poster_1.jpg)
+![Poster 2](data/poster_2.jpg)
+![Poster 3](data/poster_3.jpg)
+
+
 Project Organization
 ------------
 
@@ -59,7 +66,7 @@ Project Organization
 <p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
 
 
-## Size
+## Personal Note:
 
 original size : 1280x720
 cut size : 48x27
@@ -77,3 +84,14 @@ donne : (en 150 dpi)
 48.77cm x 73.15cm
 
 bordure de 60px pour 1 cm en 150dpi
+
+version2 : 
+
+* e63e25b
+* df89064
+* d4cb94
+* c2ff00
+* 2e58ed9 : ok
+* 2b11acbe
+* 2575f6
+* 1b4cb13: ok

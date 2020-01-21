@@ -3,6 +3,7 @@ import numpy as np
 import random
 import uuid 
 import PIL
+import click
 from PIL import ImageDraw, ImageFont
 from iss.init_config import CONFIG
 from iss.tools import Tools
@@ -20,8 +21,6 @@ from iss.tools import Tools
 BORDER_SIZE = 30
 O_WIDTH = 1080 
 O_HEIGHT = 720
-N_GENERATE = 1
-POSTER_ID = 'secret_santa_lincoln'
 CLUSTERS = {
     'horizon_only': [2, 6, 20, 23, 27, 44, 47],
     'horizon_iss': [4, 5, 12, 17, 32, 37, 40],
@@ -108,7 +107,7 @@ POSTERS_CONFIG = [{
 ## Fonctions
 ##
 
-def pictures_df(config, db_manager, config_poster):
+def get_pictures_df(config, db_manager, poster_config):
 
     
     req_sql = "SELECT * FROM iss.pictures_embedding WHERE clustering_version = %s AND clustering_model_type = %s AND clustering_model_name = %s"
@@ -208,17 +207,25 @@ def write_poster_picture(config, poster_config, poster, poster_id = None):
 ## Main
 ##
 
-if __name__  == '__main__':
+@click.command()
+@click.option('--config-id', default=1, show_default=True, type=int)
+@click.option('--generate', default=1, show_default=True, type=int)
+@click.option('--poster-id', default=None, show_default=True, type=str)
+def main(config_id, generate, poster_id):
+    
+    N_GENERATE = generate
+    POSTER_ID = poster_id
+    
     db_manager = Tools.create_db_manager(CONFIG)
 
     ## creation de la base
     db_manager.create_posters_table()
 
     ##
-    poster_config = POSTERS_CONFIG[2]
+    poster_config = POSTERS_CONFIG[config_id]
     
     ##
-    pictures_df = pictures_df(CONFIG, db_manager, poster_config)
+    pictures_df = get_pictures_df(CONFIG, db_manager, poster_config)
 
     ##
     poster = create_empty_poster(CONFIG, poster_config)
@@ -239,3 +246,7 @@ if __name__  == '__main__':
 
         ##
         write_poster_picture(CONFIG, poster_config, poster, poster_id)
+
+
+if __name__  == '__main__':
+    main()

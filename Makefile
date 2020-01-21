@@ -47,6 +47,18 @@ debug:
 config_template:
 	$(PYTHON_INTERPRETER) iss/tools/config_template.py
 
+## start docker
+docker_start:
+	docker-compose up -d
+
+## stop docker
+docker_stop:
+	docker-compose stop
+
+## docker exec bash
+docker_bash:
+	docker exec --user=jovyan -it jupyter-iss /bin/bash
+
 
 #################################################################################
 # PROJECT RULES                                                                 #
@@ -67,6 +79,9 @@ training:
 
 exec_clustering:
 	$(PYTHON_INTERPRETER) -m iss.exec.clustering
+
+posters:
+	$(PYTHON_INTERPRETER) -m iss.exec.posters --config-id=1 --generate=1 --poster-id='test'
 
 
 #################################################################################
