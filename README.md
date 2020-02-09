@@ -14,9 +14,9 @@ My new goal aim to create nice poster composed of different kind of cluster i fo
 
 ## Poster examples
 
-<!-- ![Poster 1](data/poster_1.jpg)
+![Poster 1](data/poster_1.jpg)
 ![Poster 2](data/poster_2.jpg)
-![Poster 3](data/poster_3.jpg) -->
+![Poster 3](data/poster_3.jpg)
 
 
 ## Environment
