@@ -311,6 +311,7 @@ Example of negative silhouette score (cluster 35):
 
 A bit messy.
 
+See all mosaic cluster on [imgur](https://earthfromiss.imgur.com/all/).
 
 #### Facets
 
