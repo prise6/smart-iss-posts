@@ -45,7 +45,7 @@ debug:
 
 ## Write config template
 config_template:
-	$(PYTHON_INTERPRETER) iss/tools/config_template.py
+	$(PYTHON_INTERPRETER) -m iss.tools.config_template
 
 ## start docker
 docker_start:
@@ -79,6 +79,9 @@ training:
 
 exec_clustering:
 	$(PYTHON_INTERPRETER) -m iss.exec.clustering
+
+facets:
+	$(PYTHON_INTERPRETER) -m iss.exec.facets
 
 posters:
 	$(PYTHON_INTERPRETER) -m iss.exec.posters --config-id=1 --generate=1 --poster-id='test'

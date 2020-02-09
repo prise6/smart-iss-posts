@@ -227,6 +227,10 @@ i use a special config file for floydhub so i provide a different `.env` file.
 
 Training dashboard and dataset are public and available [here](https://www.floydhub.com/prise6/projects/smart-iss-posts/22) 
 
+```
+make floyd_training_prod
+```
+
 I tested google colab and train the final model with it, but result are really similar to the floydhub model.
 
 ### Clustering
@@ -310,7 +314,27 @@ A bit messy.
 
 #### Facets
 
-*WIP*
+Let's try [facets](https://pair-code.github.io/facets/) on this dataset ! Thanks to mysql db i can compare different clustering and visualize it with facets-dive.
+
+```
+make facets
+```
+
+Two html page are created in the directory `reports/`.
+
+You can manipulate all your images:
+
+![facets_dive_0](data/facets_dive_0.png)
+
+Bin by cluster:
+
+![facets_dive_0](data/facets_dive_1.png)
+
+And zoom on it:
+
+![facets_dive_0](data/facets_dive_2.png)
+
+It's a bit messy because you cannot filter your data  ... but the sprite trick make it fast!
 
 
 ### Posters

@@ -1,12 +1,75 @@
+clustering:
+  advanced:
+    PCA:
+      n_components: XXX
+      random_state: XXX
+    dbscan:
+      eps: XXX
+      min_samples: XXX
+    kmeans: XXX
+    save_directory: XXX
+    strong_kmeans:
+      high: XXX
+      iter: XXX
+      low: XXX
+      seed: XXX
+      threshold: XXX
+    version: XXX
+  classical:
+    CAH:
+      n_clusters: XXX
+    PCA:
+      n_components: XXX
+      random_state: XXX
+    TSNE:
+      n_components: XXX
+    kmeans:
+      n_clusters: XXX
+      random_state: XXX
+    model:
+      name: XXX
+      type: XXX
+    save_directory: XXX
+    version: XXX
+  dbscan:
+    dbscan:
+      min_cluster_size: XXX
+      min_samples: XXX
+    model:
+      name: XXX
+      type: XXX
+    save_directory: XXX
+    umap:
+      metric: XXX
+      min_dist: XXX
+      n_components: XXX
+      n_neighbors: XXX
+      random_state: XXX
+    version: XXX
+  n2d:
+    kmeans:
+      n_clusters: XXX
+      random_state: XXX
+    model:
+      name: XXX
+      type: XXX
+    save_directory: XXX
+    umap:
+      metric: XXX
+      min_dist: XXX
+      n_components: XXX
+      n_neighbors: XXX
+      random_state: XXX
+    version: XXX
 directory:
-  autoencoder:
-    base: XXX
-    test: XXX
-    train: XXX
-    valid: XXX
   collections: XXX
+  data_dir: XXX
+  isr_dir: XXX
+  project_dir: XXX
+  reports: XXX
 models:
   simple:
+    activation: XXX
     batch_size: XXX
     callbacks:
       checkpoint:
@@ -23,6 +86,97 @@ models:
     input_channel: XXX
     input_height: XXX
     input_width: XXX
+    latent_shape: XXX
+    learning_rate: XXX
+    model_name: XXX
+    sampling: XXX
+    save_directory: XXX
+    steps_per_epoch: XXX
+    use_multiprocessing: XXX
+    validation_freq: XXX
+    validation_steps: XXX
+    verbose: XXX
+    workers: XXX
+  simple_conv:
+    activation: XXX
+    batch_size: XXX
+    callbacks:
+      checkpoint:
+        directory: XXX
+        period: XXX
+        verbose: XXX
+      csv_logger:
+        append: XXX
+        directory: XXX
+      floyd: XXX
+      tensorboard:
+        limit_image: XXX
+        log_dir: XXX
+    epochs: XXX
+    initial_epoch: XXX
+    input_channel: XXX
+    input_height: XXX
+    input_width: XXX
+    latent_channel: XXX
+    latent_height: XXX
+    latent_width: XXX
+    learning_rate: XXX
+    model_name: XXX
+    sampling: XXX
+    save_directory: XXX
+    steps_per_epoch: XXX
+    use_multiprocessing: XXX
+    validation_freq: XXX
+    validation_steps: XXX
+    verbose: XXX
+    workers: XXX
+  variational:
+    activation: XXX
+    batch_size: XXX
+    callbacks:
+      checkpoint:
+        directory: XXX
+        period: XXX
+        verbose: XXX
+      csv_logger:
+        append: XXX
+        directory: XXX
+      display_picture:
+        epoch_laps: XXX
+    epochs: XXX
+    initial_epoch: XXX
+    input_channel: XXX
+    input_height: XXX
+    input_width: XXX
+    latent_shape: XXX
+    learning_rate: XXX
+    model_name: XXX
+    save_directory: XXX
+    steps_per_epoch: XXX
+    use_multiprocessing: XXX
+    validation_freq: XXX
+    validation_steps: XXX
+    verbose: XXX
+    workers: XXX
+  variational_conv:
+    activation: XXX
+    batch_size: XXX
+    callbacks:
+      checkpoint:
+        directory: XXX
+        period: XXX
+        verbose: XXX
+      csv_logger:
+        append: XXX
+        directory: XXX
+      display_picture:
+        epoch_laps: XXX
+    epochs: XXX
+    initial_epoch: XXX
+    input_channel: XXX
+    input_height: XXX
+    input_width: XXX
+    latent_shape: XXX
     learning_rate: XXX
     model_name: XXX
     save_directory: XXX
@@ -39,10 +193,17 @@ mysql:
     port: XXX
     server: XXX
     user: XXX
-training:
-  proportions:
-    test: XXX
-    train: XXX
-    valid: XXX
-  seed: XXX
+sampling:
+  autoencoder:
+    directory:
+      base: XXX
+      from: XXX
+      test: XXX
+      train: XXX
+      valid: XXX
+    proportions:
+      test: XXX
+      train: XXX
+      valid: XXX
+    seed: XXX
 version: XXX
